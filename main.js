@@ -2,24 +2,22 @@ const jobsArr = [];
 let current_page = 1;
 let job_items = 5;
 
-// GET DATA
-async function getData() {
+// GET DATA FROM API
+(async function getData() {
   openLoading();
   try {
     const url = await fetch("https://cors-anywhere-venky.herokuapp.com/https://jobs.github.com/positions.json");
     const data = await url.json();
 
-    for (let el of data) {
-      jobsArr.push(el);
-    }
+    for (let el of data) { jobsArr.push(el) };
+
   } catch (err) {
-    console.log(err)
+    console.log(err);
   } finally {
     renderMainCard();
   }
 
-}
-getData();
+})();
 
 // DISPLAY JOB BOXES FROM ARAY 
 function buildJobCard(data, items_per_page, page) {
@@ -32,28 +30,28 @@ function buildJobCard(data, items_per_page, page) {
   let paginatedItems = data.slice(start, end);
 
   const result = (data < 1) ? `<h2 class="header--no--found"> No results found </h2> `
-  : 
+    :
     paginatedItems.map(job => {
       return `
-        <div class="job__box" data-id="${ job.id }">
+        <div class="job__box" data-id="${job.id}">
           <div class="job__box--logo">
-            <img src="${ job.company_logo }" class="img img-logo" alt="company ${ job.company } logo">
+            <img src="${job.company_logo}" class="img img-logo" alt="company ${job.company} logo">
           </div>
 
           <div class="job__box--description">
-            <h3 class="company--name"> ${ job.company } </h3>
-            <p class="par par--jobtitle"> ${ job.title } </p>
-            <p class="par par--jobtime"> ${ job.type } </p>
+            <h3 class="company--name"> ${job.company} </h3>
+            <p class="par par--jobtitle"> ${job.title} </p>
+            <p class="par par--jobtime"> ${job.type} </p>
           </div>
 
           <div class="job__box--location">
             <div class="location--box">
               <span class="span span--icon fas fa-globe"></span>
-              <span class="span span--location"> ${ job.location } </span>
+              <span class="span span--location"> ${job.location} </span>
             </div>
             <div class="location--box">
               <span class="span span--icon far fa-clock"> </span>
-              <span class="span span--date"> ${ checkDate(job.created_at) } </span>
+              <span class="span span--date"> ${checkDate(job.created_at)} </span>
             </div>
           </div>
 
@@ -92,7 +90,7 @@ function displayItem(card) {
           </p>
         </div>
         <div class="apply--item">
-          ${ card[0].how_to_apply }
+          ${card[0].how_to_apply}
         </div>
       </div>
 
@@ -101,23 +99,23 @@ function displayItem(card) {
     <section class="section section--main--job">
       <div class="detail--item item--column ">
         <div class="detail--title">
-          <p class="par par--jobtitle"> ${ card[0].title }</p>
-          <p class="par par--jobtime"> ${ card[0].type } </p>
+          <p class="par par--jobtitle"> ${card[0].title}</p>
+          <p class="par par--jobtime"> ${card[0].type} </p>
         </div>
         <div class="job__box--location">
           <div class="location--box">
             <span class="span span--icon  far fa-clock"> </span>
-            <span class="span span--date"> ${ checkDate(card[0].created_at) }</span>
+            <span class="span span--date"> ${checkDate(card[0].created_at)}</span>
           </div>
         </div>
       </div>
 
       <div class="detail--item item--row">
         <div class="job__box--logo">
-          <img src="${ card[0].company_logo}" class="img img-logo" alt="company ${ card[0].company } logo">
+          <img src="${card[0].company_logo}" class="img img-logo" alt="company ${card[0].company} logo">
         </div>
         <div class="job__box--description">
-          <h3 class="company--name"> ${ card[0].company } </h3>
+          <h3 class="company--name"> ${card[0].company} </h3>
           <div class="location--box">
             <span class="span span--icon fas fa-globe"></span>
             <span class="span span--location"> ${card[0].location} </span>
@@ -126,7 +124,7 @@ function displayItem(card) {
       </div>
 
       <div class="detail--item item--column detail--description ">
-        ${ card[0].description }
+        ${card[0].description}
       </div>
 
     </section>
@@ -249,9 +247,12 @@ function renderMainCard() {
   displayPagination(jobsArr, job_items, current_page);
 
   const checkBoxJob = document.querySelector("#inputCheckbox");
+
   checkBoxJob.addEventListener("click", e => {
     const value = e.target.value;
-    checkBoxJob.checked ? fullTimeJobs(value) : buildJobCard(jobsArr, job_items, current_page);
+    let result = checkBoxJob.checked ? true : false;
+
+    fullTimeJobs(value, result);
   });
 
   const formMain = document.querySelector(".form--main");
@@ -277,7 +278,7 @@ function displayPagination(items, rows) {
   }
 }
 
-// SET ACTIVE BUTTON IN PAGINATION AND CHANGE JOBS
+// SET ACTIVE BUTTON IN PAGINATION AND CHANGE JOBS SITE
 function displayPaginationButtons(i, items) {
   const li = document.createElement("li");
   li.classList.add("pagination--li");
@@ -285,7 +286,7 @@ function displayPaginationButtons(i, items) {
   const btn = document.createElement("button");
   btn.classList.add("btn", "btn--pagination");
   btn.setAttribute("type", "button");
-  btn.innerText = `${ i }`
+  btn.innerText = `${i}`
 
   li.appendChild(btn);
 
@@ -293,9 +294,9 @@ function displayPaginationButtons(i, items) {
 
   btn.addEventListener("click", () => {
     current_page = i;
-    
+
     buildJobCard(items, job_items, current_page);
-    
+
     let current_btn = document.querySelector(".pagination--list .btn.btn--active");
     current_btn.classList.remove("btn--active");
     btn.classList.add("btn--active");
@@ -312,8 +313,8 @@ function createCitiesList() {
   const city = citiesList.map(item => {
     return `
       <li class="cities--li">
-        <input type="radio" value="${ item }" id="${ item }" name="city" class="input input--radio">
-        <label for="${ item }" class="label label--city"> ${ item } </label>
+        <input type="radio" value="${item}" id="${item}" name="city" class="input input--radio">
+        <label for="${item}" class="label label--city"> ${item} </label>
       </li>
     `
   }).join("");
@@ -331,7 +332,7 @@ function markActiveCityButton(btns, arr) {
     const cities = arr.filter(({ location }) => location === cityVal);
     buildJobCard(cities, job_items, current_page);
     displayPagination(cities, job_items, current_page);
-  }))
+  }));
 }
 
 // FILTER CLICKED JOB BOX
@@ -340,7 +341,7 @@ function markJobBox(elements, result) {
     const jobId = e.target.dataset.id;
     const jobCard = result.filter(({ id }) => id === jobId);
     displayItem(jobCard);
-  }))
+  }));
 }
 
 // GET DATE AND RETURN DAYS
@@ -348,18 +349,23 @@ function checkDate(time) {
   const prevDay = new Date(time).getTime();
   const today = new Date().getTime();
 
-  let difference = Math.round((today - prevDay) / (1000 * 3600 * 24));
+  let difference = Math.ceil((today - prevDay) / (1000 * 3600 * 24));
 
   if (difference === 0) return `today`;
-  else if (difference === 1) return `yestreday`
-  else if (difference > 1) return `${difference} days ago`
+  else if (difference === 1) return `yestreday`;
+  else if (difference > 1) return `${difference} days ago`;
 }
 
 // FULL TIME JOBS FILTER
-function fullTimeJobs(val) {
-  const result = jobsArr.filter(({ type }) => type === val);
-  buildJobCard(result, job_items, current_page);
-  displayPagination(result, job_items, current_page);
+function fullTimeJobs(val, res) {
+  if (res) {   // if true
+    const result = jobsArr.filter(({ type }) => type === val);
+    buildJobCard(result, job_items, current_page);
+    displayPagination(result, job_items, current_page);
+  } else if (!res) {    // if false
+    buildJobCard(jobsArr, job_items, current_page);
+    displayPagination(jobsArr, job_items, current_page);
+  }
 }
 
 // FORM MAIN SEARCH BY TITLE / COMPANY NAME
@@ -368,10 +374,12 @@ function searchCompany(e) {
   const input = document.querySelector(".input--form");
   const inputVal = input.value.trim().toLowerCase();
 
-  if(inputVal !== "") {
+  if (inputVal !== "") {
     const result = jobsArr.filter(({ description }) => description.toLowerCase().includes(inputVal));
     buildJobCard(result, job_items, current_page);
     displayPagination(result, job_items, current_page);
+  } else if (inputVal === "") {
+    alert("Fill input");
   }
   input.value = "";
 }
@@ -386,6 +394,8 @@ function searchCity(e) {
     const result = jobsArr.filter(({ location }) => location.toLowerCase().includes(inputVal));
     buildJobCard(result, job_items, current_page);
     displayPagination(result, job_items, current_page);
+  } else if (inputVal === "") {
+    alert("Fill input");
   }
   input.value = "";
 }
