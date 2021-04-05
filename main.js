@@ -234,7 +234,7 @@ function renderMainCard() {
 
     <footer class="footer">
       <span class="span span--footer"> created by </span>
-      <a href="https://github.com/maciejwerner/weather_app" target="_blank" class="link link--footer">
+      <a href="https://github.com/maciejwerner/github_jobs" target="_blank" class="link link--footer">
         <strong> Maciej Werner </strong>
       </a>
       <span class="span span--footer"> - </span>
